@@ -9,7 +9,7 @@ def handle_event():
             speed[1] = SPEED_BOUNCE
 
 # Constants
-WINDOW_SIZE = WIDTH, HEIGHT = 500, 500
+WINDOW_SIZE = WIDTH, HEIGHT = 480, 480
 SPEED_BOUNCE = -15
 SPEED_MAX = 25
 GRAVITY = 0.75
@@ -25,7 +25,12 @@ jamesrect = james.get_rect()
 jamesrect.left = (WIDTH / 3) - (jamesrect.width / 2)
 jamesrect.bottom = (HEIGHT / 2)
 
-while 1:
+# background scrolling
+bkgd = pygame.image.load("background.png").convert()
+x = 0
+
+# main loop
+while True:
     handle_event()
 
     # Flipping the sign of speed makes it change direction.
@@ -39,6 +44,14 @@ while 1:
 
     jamesrect = jamesrect.move(speed)
 
-    screen.fill(BLACK)
+    # scrolling image
+    rel_x = x % bkgd.get_rect().width
+	
+    screen.blit(bkgd, (rel_x - bkgd.get_rect().width, 0))
+    if rel_x < WIDTH:
+        screen.blit(bkgd, (rel_x, 0))
+    x += -.1
+
     screen.blit(james, jamesrect)
     pygame.display.flip()
+
