@@ -9,11 +9,12 @@ def handle_event():
             speed[1] = SPEED_BOUNCE
 
 # Constants
+FPS = 60
 WINDOW_SIZE = WIDTH, HEIGHT = 480, 480
 SPEED_BOUNCE = -15
 SPEED_MAX = 25
 GRAVITY = 0.75
-BLACK = 0, 0, 0
+clock = pygame.time.Clock()
 
 # Variables
 speed = [0, 0]
@@ -50,8 +51,8 @@ while True:
     screen.blit(bkgd, (rel_x - bkgd.get_rect().width, 0))
     if rel_x < WIDTH:
         screen.blit(bkgd, (rel_x, 0))
-    x += -.1
+    x += -2
 
     screen.blit(james, jamesrect)
     pygame.display.flip()
-
+    clock.tick(FPS)
