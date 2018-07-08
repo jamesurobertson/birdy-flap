@@ -10,8 +10,9 @@ WINDOW_SIZE = WIDTH, HEIGHT = 480, 480
 SPEED_BOUNCE = -10
 SPEED_MAX = 25
 GRAVITY = 0.65
-MYFONT = pygame.font.SysFont("monospace", 16)
+MYFONT = pygame.font.match_font('arial')
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 clock = pygame.time.Clock()
 
 # Variables
@@ -32,6 +33,15 @@ def handle_event():
         if event.type == pygame.KEYDOWN and (event.key == pygame.K_SPACE or event.key == pygame.K_UP):
             speed[1] = SPEED_BOUNCE
             started = True
+
+def draw_text(surf, text, size, x, y):
+    font = pygame.font.Font(MYFONT, size)
+    textSurface = font.render(text, True, BLACK)
+    textRect = textSurface.get_rect()
+    textRect.midtop = (x, y)
+    surf.blit(textSurface, textRect)
+     
+
 
 # Draw "bird" and set initial position
 def load_bird(img):
@@ -115,13 +125,10 @@ while True:
         jamesrect = jamesrect.move(speed) 
 
     #scoring 
-    scoretext = MYFONT.render("Score:{0}".format(score), 1, (BLACK))
     if pipeUpperRect.right == 132:
         score += 1
-        print (score)
     if pipeUpperRect2.right == 132:
         score += 1
-        print (score)
 
     # collision testing
 
@@ -139,7 +146,7 @@ while True:
     screen.blit(pipeLower, pipeLowerRect)
     screen.blit(pipeUpper2, pipeUpperRect2)
     screen.blit(pipeLower2, pipeLowerRect2)
-    screen.blit(scoretext, (360,10))
+    draw_text(screen, str(score), 36, WIDTH/2, 10)
 
     screen.blit(james, jamesrect)
         
