@@ -2,18 +2,20 @@ import sys, pygame, random
 pygame.init()
 
 def handle_event():
+    global started
     for event in pygame.event.get():
         if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             sys.exit()
         if event.type == pygame.KEYDOWN and (event.key == pygame.K_SPACE or event.key == pygame.K_UP):
             speed[1] = SPEED_BOUNCE
+            started = True
 
 # Draw "bird" and set initial position
 def load_bird(img):
     bird = pygame.image.load(img)
     rect = bird.get_rect()
     rect.left = (WIDTH / 3) - (rect.width / 2)
-    rect.bottom = (HEIGHT / 2)
+    rect.bottom = (HEIGHT / 2) + (rect.height / 2)
     return bird, rect
 
 # Constants
@@ -28,6 +30,7 @@ clock = pygame.time.Clock()
 
 # Variables
 speed = [0, 0]
+started = False
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
 # background scrolling
@@ -75,6 +78,7 @@ while True:
     if rel_x < WIDTH:
         screen.blit(bkgd, (rel_x, 0))
     bkgdx += -2
+    
     # replacing the pipes
     if pipeUpperRect.left < -pipeUpperRect.width:
         pipeUpperRect.left = WIDTH + (WIDTH / 3)
@@ -90,6 +94,18 @@ while True:
     pipeUpperRect.left += -5
     pipeLowerRect.left += -5 
 
+    if started:
+        # Flipping the sign of speed makes it change direction.
+        # This combined with line 28 gives a bouncing effect.
+        if jamesrect.bottom > HEIGHT:
+            speed[1] = 0
+
+        # Accelerate up to speed_max
+        if speed[1] < SPEED_MAX:
+            speed[1] += GRAVITY
+
+        jamesrect = jamesrect.move(speed)
+        
     screen.blit(james, jamesrect)
     screen.blit(pipeUpper, pipeUpperRect)
     screen.blit(pipeLower, pipeLowerRect)
