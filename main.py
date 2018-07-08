@@ -139,7 +139,7 @@ while True:
     screen.blit(pipeLower, pipeLowerRect)
     screen.blit(pipeUpper2, pipeUpperRect2)
     screen.blit(pipeLower2, pipeLowerRect2)
-    screen.blit(scoretext, (400,10))
+    screen.blit(scoretext, (360,10))
 
     screen.blit(james, jamesrect)
         
