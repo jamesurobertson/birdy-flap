@@ -99,6 +99,9 @@ while True:
         # This combined with line 28 gives a bouncing effect.
         if jamesrect.bottom > HEIGHT:
             speed[1] = 0
+            started = False
+            jamesrect.left = (WIDTH / 3) - (jamesrect.width / 2)
+            jamesrect.bottom = (HEIGHT / 2) + (jamesrect.height / 2)
 
         # Accelerate up to speed_max
         if speed[1] < SPEED_MAX:
