@@ -23,9 +23,9 @@ BACKGROUND = "background.png"
 BIRD = "james.png"
 FPS = 60
 WINDOW_SIZE = WIDTH, HEIGHT = 480, 480
-SPEED_BOUNCE = -15
+SPEED_BOUNCE = -10
 SPEED_MAX = 25
-GRAVITY = 0.75
+GRAVITY = 0.65
 clock = pygame.time.Clock()
 
 # Variables
