@@ -10,14 +10,17 @@ WINDOW_SIZE = WIDTH, HEIGHT = 480, 480
 SPEED_BOUNCE = -10
 SPEED_MAX = 25
 GRAVITY = 0.65
+MYFONT = pygame.font.SysFont("monospace", 16)
+BLACK = (0, 0, 0)
 clock = pygame.time.Clock()
 
 # Variables
 speed = [0, 0]
 started = False
+score = 0;
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
-# background scrolling
+# background
 bkgd = pygame.image.load(BACKGROUND).convert()
 bkgdx = 0
 
@@ -88,6 +91,7 @@ while True:
         if pipeUpperRect2.left < -pipeUpperRect2.width:
             pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2 = load_pipe2(PIPE)
 
+        # scrolling pipes
         pipeUpperRect.left += -5
         pipeLowerRect.left += -5
         pipeUpperRect2.left += -5
@@ -101,19 +105,41 @@ while True:
             pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect = load_pipe(PIPE)
             pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2 = load_pipe2(PIPE)
             james, jamesrect = load_bird(BIRD)
+            score = 0
 
 
         # Accelerate up to speed_max
         if speed[1] < SPEED_MAX:
             speed[1] += GRAVITY
 
-        jamesrect = jamesrect.move(speed)
+        jamesrect = jamesrect.move(speed) 
 
+    #scoring 
+    scoretext = MYFONT.render("Score:{0}".format(score), 1, (BLACK))
+    if pipeUpperRect.right == 132:
+        score += 1
+        print (score)
+    if pipeUpperRect2.right == 132:
+        score += 1
+        print (score)
+
+    # collision testing
+
+    if jamesrect.colliderect(pipeUpperRect) or jamesrect.colliderect(pipeLowerRect):
+        print("Collide")
+        speed[1] = 0
+        started = False
+        pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect = load_pipe(PIPE)
+        pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2 = load_pipe2(PIPE)
+        james, jamesrect = load_bird(BIRD)
+        score = 0
+	
     screen.blit(bkgd, (rel_x - bkgd.get_rect().width, 0))
     screen.blit(pipeUpper, pipeUpperRect)
     screen.blit(pipeLower, pipeLowerRect)
     screen.blit(pipeUpper2, pipeUpperRect2)
     screen.blit(pipeLower2, pipeLowerRect2)
+    screen.blit(scoretext, (400,10))
 
     screen.blit(james, jamesrect)
         
