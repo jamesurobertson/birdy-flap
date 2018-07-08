@@ -8,7 +8,17 @@ def handle_event():
         if event.type == pygame.KEYDOWN and (event.key == pygame.K_SPACE or event.key == pygame.K_UP):
             speed[1] = SPEED_BOUNCE
 
+# Draw "bird" and set initial position
+def load_bird(img):
+    bird = pygame.image.load(img)
+    rect = bird.get_rect()
+    rect.left = (WIDTH / 3) - (rect.width / 2)
+    rect.bottom = (HEIGHT / 2)
+    return bird, rect
+
 # Constants
+BACKGROUND = "background.png"
+BIRD = "james.png"
 FPS = 60
 WINDOW_SIZE = WIDTH, HEIGHT = 480, 480
 SPEED_BOUNCE = -15
@@ -20,14 +30,8 @@ clock = pygame.time.Clock()
 speed = [0, 0]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
-# Draw "bird" and set initial position
-james = pygame.image.load("james.png")
-jamesrect = james.get_rect()
-jamesrect.left = (WIDTH / 3) - (jamesrect.width / 2)
-jamesrect.bottom = (HEIGHT / 2)
-
 # background scrolling
-bkgd = pygame.image.load("background.png").convert()
+bkgd = pygame.image.load(BACKGROUND).convert()
 bkgdx = 0
 
 # draw pipes and set initial positions
@@ -47,6 +51,7 @@ def load_pipe(img):
 pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect = load_pipe("pipe.bmp")
 pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2 = load_pipe("pipe.bmp")
 
+james, jamesrect = load_bird(BIRD)
 
 # main loop
 while True:
@@ -55,7 +60,7 @@ while True:
     # Flipping the sign of speed makes it change direction.
     # This combined with line 28 gives a bouncing effect.
     if jamesrect.bottom > HEIGHT:
-        speed[1] = -speed[1]
+        speed[1] = 0
 
     # Accelerate up to speed_max
     if speed[1] < SPEED_MAX:
