@@ -1,4 +1,4 @@
-import sys, pygame
+import sys, pygame, random
 pygame.init()
 
 def handle_event():
@@ -28,7 +28,25 @@ jamesrect.bottom = (HEIGHT / 2)
 
 # background scrolling
 bkgd = pygame.image.load("background.png").convert()
-x = 0
+bkgdx = 0
+
+# draw pipes and set initial positions
+def load_pipe(img):
+    pipeUpper = pygame.image.load(img)
+    pipeLower = pygame.image.load(img)
+    pipeUpperRect = pipeUpper.get_rect()
+    pipeLowerRect = pipeLower.get_rect()
+    pipeUpperRect.left = WIDTH + (WIDTH / 3)
+    pipeLowerRect.left = WIDTH + (WIDTH / 3)
+    pipeUpperRect.bottom = random.randrange(30 , 322)
+    # space between pipes
+    pipeLowerRect.top = pipeUpperRect.bottom + (jamesrect.height * 2.5)
+    return pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect
+
+# pipe scrolling
+pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect = load_pipe("pipe.bmp")
+pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2 = load_pipe("pipe.bmp")
+
 
 # main loop
 while True:
@@ -45,14 +63,33 @@ while True:
 
     jamesrect = jamesrect.move(speed)
 
-    # scrolling image
-    rel_x = x % bkgd.get_rect().width
+    # scrolling backgroundimage
+    rel_x = bkgdx % bkgd.get_rect().width
 	
     screen.blit(bkgd, (rel_x - bkgd.get_rect().width, 0))
     if rel_x < WIDTH:
         screen.blit(bkgd, (rel_x, 0))
-    x += -2
+    bkgdx += -2
+    # replacing the pipes
+    if pipeUpperRect.left < -pipeUpperRect.width:
+        pipeUpperRect.left = WIDTH + (WIDTH / 3)
+        pipeLowerRect.left = WIDTH + (WIDTH / 3)
+        pipeUpperRect.bottom = random.randrange(30 , 322)
+        pipeLowerRect.top = pipeUpperRect.bottom + (jamesrect.height * 2.5)
+    if pipeUpperRect2.left < -pipeUpperRect.width:
+        pipeUpperRect2.left = WIDTH + (WIDTH / 3)
+        pipeLowerRect2.left = WIDTH + (WIDTH / 3)
+        pipeUpperRect2.bottom = random.randrange(30 , 322)
+        pipeLowerRect2.top = pipeUpperRect2.bottom + (jamesrect.height * 2.5)
+    
+    pipeUpperRect.left += -5
+    pipeLowerRect.left += -5 
 
     screen.blit(james, jamesrect)
+    screen.blit(pipeUpper, pipeUpperRect)
+    screen.blit(pipeLower, pipeLowerRect)
+    screen.blit(pipeUpper2, pipeUpperRect2)
+    screen.blit(pipeLower2, pipeLowerRect2)
+
     pygame.display.flip()
     clock.tick(FPS)
