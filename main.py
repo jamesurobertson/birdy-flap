@@ -1,10 +1,12 @@
 import sys, pygame, random
+from classes import Pipes
 pygame.init()
 
 # Constants
 BACKGROUND = "background.png"
 BIRD = "james.png"
 PIPE = "pipe.bmp"
+PIPE_SPEED = 2
 FPS = 60
 WINDOW_SIZE = WIDTH, HEIGHT = 480, 480
 SPEED_BOUNCE = -10
@@ -40,8 +42,6 @@ def draw_text(surf, text, size, x, y):
     textRect = textSurface.get_rect()
     textRect.midtop = (x, y)
     surf.blit(textSurface, textRect)
-     
-
 
 # Draw "bird" and set initial position
 def load_bird(img):
@@ -51,37 +51,10 @@ def load_bird(img):
     rect.bottom = (HEIGHT / 2) + (rect.height / 2)
     return bird, rect
 
-# draw pipes and set initial positions
-def load_pipe(img):
-    pipeUpper = pygame.image.load(img)
-    pipeLower = pygame.image.load(img)
-    pipeUpperRect = pipeUpper.get_rect()
-    pipeLowerRect = pipeLower.get_rect()
-    pipeUpperRect.left = WIDTH + (WIDTH / 3)
-    pipeLowerRect.left = WIDTH + (WIDTH / 3)
-    pipeUpperRect.bottom = random.randrange(30 , 300)
-    # space between pipes
-    pipeLowerRect.top = pipeUpperRect.bottom + (jamesrect.height * 2)
-    return pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect
-
-def load_pipe2(img):
-    pipeUpper2 = pygame.image.load(img)
-    pipeLower2 = pygame.image.load(img)
-    pipeUpperRect2 = pipeUpper.get_rect()
-    pipeLowerRect2 = pipeLower.get_rect()
-    pipeUpperRect2.left = pipeUpperRect.left + (WIDTH * .73)
-    pipeLowerRect2.left = pipeLowerRect.left + (WIDTH * .73)
-
-    pipeUpperRect2.bottom = random.randrange(30 , 300)
-    # space between pipes
-    pipeLowerRect2.top = pipeUpperRect2.bottom + (jamesrect.height * 2)
-    return pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2
-
 # load objects
 james, jamesrect = load_bird(BIRD)
-pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect = load_pipe(PIPE)
-pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2 = load_pipe2(PIPE)
-
+pipes = Pipes(3, jamesrect, screen)
+pipes.place()
 
 # main loop
 while True:
@@ -92,62 +65,39 @@ while True:
     if rel_x < WIDTH:
         screen.blit(bkgd, (rel_x, 0))
 
-    bkgdx += -2
+    bkgdx -= 2
 
     if started:    
-        # replacing the pipes
-        if pipeUpperRect.left < -pipeUpperRect.width:
-            pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect = load_pipe(PIPE)
-        if pipeUpperRect2.left < -pipeUpperRect2.width:
-            pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2 = load_pipe2(PIPE)
-
-        # scrolling pipes
-        pipeUpperRect.left += -5
-        pipeLowerRect.left += -5
-        pipeUpperRect2.left += -5
-        pipeLowerRect2.left += -5
-
-
         # Flipping the sign of speed makes it change direction.
         if jamesrect.bottom > HEIGHT:
             speed[1] = 0
             started = False
-            pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect = load_pipe(PIPE)
-            pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2 = load_pipe2(PIPE)
+            pipes.place()
             james, jamesrect = load_bird(BIRD)
             score = 0
-
 
         # Accelerate up to speed_max
         if speed[1] < SPEED_MAX:
             speed[1] += GRAVITY
 
-        jamesrect = jamesrect.move(speed) 
+        jamesrect = jamesrect.move(speed)
+        pipes.move(PIPE_SPEED)
 
-    #scoring 
-    if pipeUpperRect.right == 132:
-        score += 1
-    if pipeUpperRect2.right == 132:
-        score += 1
+    # scoring 
+    # if pipes.upperRect.right == 132:
+    #     score += 1
 
     # collision testing
-
-    if jamesrect.colliderect(pipeUpperRect) or jamesrect.colliderect(pipeLowerRect):
-        print("Collide")
-        speed[1] = 0
-        started = False
-        pipeUpper, pipeUpperRect, pipeLower, pipeLowerRect = load_pipe(PIPE)
-        pipeUpper2, pipeUpperRect2, pipeLower2, pipeLowerRect2 = load_pipe2(PIPE)
-        james, jamesrect = load_bird(BIRD)
-        score = 0
+    # if jamesrect.colliderect(pipes.upperRect) or jamesrect.colliderect(pipes.lowerRect):
+    #     speed[1] = 0
+    #     started = False
+    #     pipes.place()
+    #     james, jamesrect = load_bird(BIRD)
+    #     score = 0
 	
     screen.blit(bkgd, (rel_x - bkgd.get_rect().width, 0))
-    screen.blit(pipeUpper, pipeUpperRect)
-    screen.blit(pipeLower, pipeLowerRect)
-    screen.blit(pipeUpper2, pipeUpperRect2)
-    screen.blit(pipeLower2, pipeLowerRect2)
+    pipes.blit(screen)
     draw_text(screen, str(score), 36, WIDTH/2, 10)
-
     screen.blit(james, jamesrect)
         
     pygame.display.flip()
